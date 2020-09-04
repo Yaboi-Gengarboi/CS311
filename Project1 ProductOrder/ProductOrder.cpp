@@ -32,7 +32,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include "productorder.h"
+#include "ProductOrder.h"
 
 #include <string>
 using std::string;
@@ -142,13 +142,13 @@ bool operator == (const ProductOrder& po1, const ProductOrder& po2)
 
 bool operator != (const ProductOrder& po1, const ProductOrder& po2)
 {
-	if (po1.getName() == po2.getName())
-		return false;
+	if (po1.getName() != po2.getName())
+		return true;
 
-	if (po1.getNumber() == po2.getNumber())
-		return false;
+	if (po1.getNumber() != po2.getNumber())
+		return true;
 
-	return true;
+	return false;
 }
 
 ostream& operator << (ostream& os, const ProductOrder& po)
