@@ -133,6 +133,8 @@ bool operator == (const ProductOrder& po1, const ProductOrder& po2);
 // po1.getNumber() != po2.getNumber()
 bool operator != (const ProductOrder& po1, const ProductOrder& po2);
 
+// ostream insertion operator.
+// This prints the same std::string that is returned by toString().
 std::ostream& operator << (std::ostream& os, const ProductOrder& po);
 
 #endif // PRODUCTORDER_H

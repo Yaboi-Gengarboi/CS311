@@ -91,7 +91,7 @@ string ProductOrder::toString() const
 
 ProductOrder& ProductOrder::operator ++ ()
 {
-	if (_number == 2147483647)
+	if (_number == 2147483647) // Max number for int
 		return *this;
 
 	++_number;
@@ -102,7 +102,7 @@ ProductOrder ProductOrder::operator ++ (int dummy)
 {
 	ProductOrder po(*this);
 	
-	if (_number == 2147483647)
+	if (_number == 2147483647) // Max number for int
 		return po;
 
 	++(*this);
