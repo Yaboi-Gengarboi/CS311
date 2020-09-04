@@ -98,3 +98,25 @@ ProductOrder ProductOrder::operator -- (int dummy)
 	--(*this);
 	return po;
 }
+
+bool operator == (const ProductOrder& po1, const ProductOrder& po2)
+{
+	if (po1.getName() != po2.getName())
+		return false;
+
+	if (po1.getNumber() != po2.getNumber())
+		return false;
+
+	return true;
+}
+
+bool operator != (const ProductOrder& po1, const ProductOrder& po2)
+{
+	if (po1.getName() == po2.getName())
+		return false;
+
+	if (po1.getNumber() == po2.getNumber())
+		return false;
+
+	return true;
+}

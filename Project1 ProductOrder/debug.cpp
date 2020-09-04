@@ -13,17 +13,22 @@ using std::endl;
 
 int main()
 {
+	ProductOrder po1;
+	ProductOrder po2("Paper", 2);
+
+	while (po1 != po2)
 	{
-		ProductOrder po("Paper Clips", 2147483646);
-		++po;
-		cout << po.toString() << endl << endl;
+		cout << po1.toString() << endl;
+		cout << po2.toString() << endl;
+		cout << "po1 != po2" << endl << endl;
+
+		po1.setName("Paper");
+		po1.setNumber(2);
 	}
 
-	{
-		ProductOrder po("Paper Plates", 1);
-		--po;
-		cout << po.toString() << endl << endl;
-	}
+	cout << po1.toString() << endl;
+	cout << po2.toString() << endl;
+	cout << "po1 == po2" << endl << endl;
 
 	return 0;
 }

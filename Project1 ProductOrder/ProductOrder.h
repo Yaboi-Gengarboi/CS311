@@ -95,4 +95,14 @@ class ProductOrder
 	ProductOrder operator -- (int dummy);
 };
 
+// Equality operator for ProductOrder class.
+// Returns true if po1.getName() == po2.getName() AND
+// po1.getNumber() == po2.getNumber()
+bool operator == (const ProductOrder& po1, const ProductOrder& po2);
+
+// Inequality operator for ProductOrder class.
+// Returns true if po1.getName() != po2.getName() OR
+// po1.getNumber() != po2.getNumber()
+bool operator != (const ProductOrder& po1, const ProductOrder& po2);
+
 #endif // PRODUCTORDER_H
