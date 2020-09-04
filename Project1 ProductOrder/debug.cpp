@@ -14,13 +14,14 @@ using std::endl;
 int main()
 {
 	{
-		ProductOrder po;
-		if (!po.empty())
-			cout << po.toString() << endl << endl;
+		ProductOrder po("Paper Clips", 2147483646);
+		++po;
+		cout << po.toString() << endl << endl;
 	}
 
 	{
-		ProductOrder po("Paper Plates", 3);
+		ProductOrder po("Paper Plates", 1);
+		--po;
 		cout << po.toString() << endl << endl;
 	}
 

@@ -58,3 +58,43 @@ string ProductOrder::toString() const
 {
 	return _name + " (" + to_string(_number) + ")";
 }
+
+ProductOrder& ProductOrder::operator ++ ()
+{
+	if (_number == 2147483647)
+		return *this;
+
+	++_number;
+	return *this;
+}
+
+ProductOrder ProductOrder::operator ++ (int dummy)
+{
+	ProductOrder po(*this);
+	
+	if (_number == 2147483647)
+		return po;
+
+	++(*this);
+	return po;
+}
+
+ProductOrder& ProductOrder::operator -- ()
+{
+	if (_number == 0)
+		return *this;
+
+	--_number;
+	return *this;
+}
+
+ProductOrder ProductOrder::operator -- (int dummy)
+{
+	ProductOrder po(*this);
+
+	if (_number == 0)
+		return po;
+
+	--(*this);
+	return po;
+}

@@ -13,7 +13,9 @@
 // The ProductOrder class represents an order for an item
 // or product you might find in a store or on a website. 
 //
-// INVARIANTS: _number >= 0
+// INVARIANTS: 
+//     _name.empty() != true
+//     _number >= 0
 class ProductOrder
 {
 	std::string _name;
@@ -32,18 +34,16 @@ class ProductOrder
 	public:
 
 	// Default Constructor.
-	// POSTCONDITIONS:
-	//     _name is set to "UNSPECIFIED"
-	//     _number is unchanged and is still 0
+	// _name is set to "UNSPECIFIED"
+	// _number is unchanged and is still 0
 	ProductOrder();
 
 	// Primary Constructor.
 	// PRECONDITIONS:
 	//     _name is not an empty string
 	//     _number >= 0
-	// POSTCONDITIONS:
-	//    _name is set to name
-	//    _number is set to number
+	// _name is set to name
+	// _number is set to number
 	ProductOrder(const std::string& name, int number);
 
 	// These constructors need nothing special, so we'll just = default them.
@@ -71,8 +71,28 @@ class ProductOrder
 	bool empty() const;
 
 	// Returns a std::string representation of the ProductOrder
-	// in the format: "_name (_number)"
+	// in the format: "_name (_number)".
 	std::string toString() const;
+
+	// Preincrement operator.
+	// This function will prevent overflow by checking if _number
+	// is the maximum value of a signed int.
+	ProductOrder& operator ++ ();
+
+	// Postincrement operator.
+	// This function will prevent overflow by checking if _number
+	// is the maximum value of a signed int.
+	ProductOrder operator ++ (int dummy);
+
+	// Predecriment operator.
+	// This function will prevent _number from going below 0 by
+	// checking if _number is 0.
+	ProductOrder& operator -- ();
+
+	// Postdecriment operator.
+	// This function will prevent _number from going below 0 by
+	// checking if _number is 0.
+	ProductOrder operator -- (int dummy);
 };
 
 #endif // PRODUCTORDER_H
