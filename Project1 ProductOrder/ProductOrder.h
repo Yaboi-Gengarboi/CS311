@@ -46,6 +46,12 @@ class ProductOrder
 	//    _number is set to number
 	ProductOrder(const std::string& name, int number);
 
+	// These constructors need nothing special, so we'll just = default them.
+	ProductOrder(const ProductOrder& po) = default;
+	ProductOrder& operator = (const ProductOrder& po) = default;
+	ProductOrder(ProductOrder&& po) = default;
+	ProductOrder& operator = (ProductOrder && po) = default;
+
 	// Destructor.
 	~ProductOrder() = default;
 
@@ -60,6 +66,13 @@ class ProductOrder
 
 	// Sets _number to number IF number >= 0.
 	void setNumber(int number);
+
+	// Returns true if _number is 0.
+	bool empty() const;
+
+	// Returns a std::string representation of the ProductOrder
+	// in the format: "_name (_number)"
+	std::string toString() const;
 };
 
 #endif // PRODUCTORDER_H

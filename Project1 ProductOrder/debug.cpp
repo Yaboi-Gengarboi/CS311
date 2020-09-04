@@ -13,34 +13,15 @@ using std::endl;
 
 int main()
 {
-	cout << "TESTING PRODUCTORDER CONSTRUCTORS, SETTERS AND GETTERS..." << endl << endl;
-
 	{
 		ProductOrder po;
-		cout << "TESTING DEFAULT CONSTRUCTOR..." << endl;
-		cout << "NAME: " << po.getName() << endl;
-		cout << "NUMBER: " << po.getNumber() << endl << endl;
+		if (!po.empty())
+			cout << po.toString() << endl << endl;
 	}
 
 	{
-		ProductOrder po("Paper Towels", 2);
-		cout << "TESTING PRIMARY CONSTRUCTOR..." << endl;
-		cout << "NAME: " << po.getName() << endl;
-		cout << "NUMBER: " << po.getNumber() << endl << endl;
-	}
-
-	{
-		ProductOrder po;
-		cout << "TESTING SETTER METHODS..." << endl;
-		cout << "DEFAULT VALUES:" << endl;
-		cout << "NAME: " << po.getName() << endl;
-		cout << "NUMBER: " << po.getNumber() << endl << endl;
-
-		po.setName("Napkins");
-		po.setNumber(4);
-		cout << "NEW VALUES:" << endl;
-		cout << "NAME: " << po.getName() << endl;
-		cout << "NUMBER: " << po.getNumber() << endl << endl;
+		ProductOrder po("Paper Plates", 3);
+		cout << po.toString() << endl << endl;
 	}
 
 	return 0;

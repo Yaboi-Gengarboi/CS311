@@ -9,6 +9,7 @@
 
 #include <string>
 using std::string;
+using std::to_string;
 
 void ProductOrder::setValues(const string& name, int number)
 {
@@ -46,4 +47,14 @@ void ProductOrder::setName(const string& name)
 void ProductOrder::setNumber(int number)
 {
 	setValues("", number);
+}
+
+bool ProductOrder::empty() const
+{
+	return _number == 0;
+}
+
+string ProductOrder::toString() const
+{
+	return _name + " (" + to_string(_number) + ")";
 }
