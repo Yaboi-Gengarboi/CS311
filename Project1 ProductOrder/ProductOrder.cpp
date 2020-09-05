@@ -32,7 +32,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include "ProductOrder.h"
+#include "productorder.h"
 
 #include <string>
 using std::string;
@@ -43,7 +43,7 @@ using std::ostream;
 
 void ProductOrder::setValues(const string& name, int number)
 {
-	if (!name.empty())
+	if (_name != name)
 		_name = name;
 	if (number >= 0)
 		_number = number;
@@ -76,7 +76,7 @@ void ProductOrder::setName(const string& name)
 
 void ProductOrder::setNumber(int number)
 {
-	setValues("", number);
+	setValues(_name, number);
 }
 
 bool ProductOrder::empty() const
@@ -101,10 +101,6 @@ ProductOrder& ProductOrder::operator ++ ()
 ProductOrder ProductOrder::operator ++ (int dummy)
 {
 	ProductOrder po(*this);
-	
-	if (_number == 2147483647) // Max number for int
-		return po;
-
 	++(*this);
 	return po;
 }
@@ -121,10 +117,6 @@ ProductOrder& ProductOrder::operator -- ()
 ProductOrder ProductOrder::operator -- (int dummy)
 {
 	ProductOrder po(*this);
-
-	if (_number == 0)
-		return po;
-
 	--(*this);
 	return po;
 }
