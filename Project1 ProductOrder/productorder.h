@@ -35,6 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef PRODUCTORDER_H
 #define PRODUCTORDER_H
 
+#include <limits>
 #include <string>
 #include <ostream>
 
@@ -42,7 +43,6 @@ For more information, please refer to <http://unlicense.org/>
 // or product you might find in a store or on a website. 
 //
 // INVARIANTS: 
-//     _name.empty() != true
 //     _number >= 0
 class ProductOrder
 {
@@ -55,7 +55,6 @@ class ProductOrder
 	// simply call this function, which will make the
 	// code more DRY.
 	// 
-	// IF name is an empty string, _name will not be changed.
 	// IF number is < 0, _number will not be changed.
 	void setValues(const std::string& name, int number);
 
@@ -68,8 +67,7 @@ class ProductOrder
 
 	// Primary Constructor.
 	// PRECONDITIONS:
-	//     _name is not an empty string
-	//     _number >= 0
+	//     number >= 0
 	// _name is set to name
 	// _number is set to number
 	ProductOrder(const std::string& name, int number);
