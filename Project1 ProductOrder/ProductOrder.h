@@ -35,6 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef PRODUCTORDER_H
 #define PRODUCTORDER_H
 
+#include <limits>
 #include <string>
 #include <ostream>
 

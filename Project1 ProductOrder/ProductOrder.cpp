@@ -34,6 +34,9 @@ For more information, please refer to <http://unlicense.org/>
 
 #include "productorder.h"
 
+#include <limits>
+using std::numeric_limits;
+
 #include <string>
 using std::string;
 using std::to_string;
@@ -91,7 +94,7 @@ string ProductOrder::toString() const
 
 ProductOrder& ProductOrder::operator ++ ()
 {
-	if (_number == 2147483647) // Max number for int
+	if (_number == numeric_limits<int>::max()) // Prevents overflow
 		return *this;
 
 	++_number;
