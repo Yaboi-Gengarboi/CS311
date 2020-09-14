@@ -2,7 +2,7 @@
 // test.cpp
 // Justyn Durnford
 // Created on 2020-09-10
-// Last updated on 2020-09-11
+// Last updated on 2020-09-14
 // Testing file for the MSArray class
 //
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,6 +26,14 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+#include "msarray.h"
+
+#include <algorithm>
+using std::move;
+
+#include <cstddef>
+using std::size_t;
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -36,16 +44,11 @@ using std::to_string;
 
 int main()
 {
-	string* str_arr = new string[10];
+	MSArray<char> arr1(8, 'a');
+	MSArray<char> arr2(8, 'b');
 
-	for (char c = 0; c < 10; ++c)
-	{
-		str_arr[c] = to_string(c);
-		cout << str_arr[c] << endl;
-	}
-
-	delete[] str_arr;
-	str_arr = nullptr;
+	if (arr1 < arr2)
+		cout << "arr1 < arr2" << endl;
 
 	return 0;
 }

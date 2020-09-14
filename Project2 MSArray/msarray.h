@@ -2,7 +2,7 @@
 // msarray.h
 // Justyn Durnford
 // Created on 2020-09-09
-// Last updated on 2020-09-11
+// Last updated on 2020-09-14
 // Header file for the MSArray class
 //
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,71 +26,173 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef MSARRAY_H
-#define MSARRAY_H
+#ifndef MSARRAY_H_INCLUDED
+#define MSARRAY_H_INCLUDED
 
+#include <algorithm>
 #include <cstddef>
+#include <stdexcept>
 
 template <typename T>
 class MSArray
 {
-	T* _array = nullptr;
-	std::size_t _size = 0;
-
-	void alloc(const std::size_t& size)
-	{
-		_size = size;
-		_array = new T[_size];
-	}
-
 	public:
 
-	MSArray()
+	using size_type = std::size_t;
+	using value_type = T;
+
+	private:
+
+	value_type* _array = nullptr;
+	size_type _size = 0;
+
+	void alloc(const size_type& size)
 	{
-		alloc(8);
+		_size = size;
+		_array = new value_type[_size];
 	}
 
-	MSArray(const std::size_t& size)
-	{
-		alloc(size);
-	}
-
-	MSArray(const std::size_t& size, const T& t)
-	{
-		alloc(size);
-
-		for (std::size_t i = 0; i < _size; ++i)
-			_array[i] = t;
-	}
-
-	MSArray(const MSArray& arr)
-	{
-		alloc(arr.size());
-
-		for (std::size_t i = 0; i < _size; ++i)
-			_array[i] = arr[i];
-	}
-
-	MSArray(MSArray&& arr)
-	{
-
-	}
-
-	~MSArray()
+	void dealloc()
 	{
 		delete[] _array;
 		_array = nullptr;
 	}
 
-	std::size_t size() const
+	public:
+
+	explicit MSArray()
+	{
+		alloc(8);
+	}
+
+	explicit MSArray(const size_type& size)
+	{
+		alloc(size);
+	}
+
+	explicit MSArray(const size_type& size, const value_type& t)
+	{
+		alloc(size);
+
+		for (size_type i = 0; i < _size; ++i)
+			_array[i] = t;
+	}
+
+	explicit MSArray(const MSArray& arr)
+	{
+		alloc(arr.size());
+
+		for (size_type i = 0; i < _size; ++i)
+			_array[i] = arr[i];
+	}
+
+	explicit MSArray(MSArray&& arr) noexcept
+	{
+		_array = arr._array;
+		arr._array = nullptr;
+	}
+
+	MSArray& operator = (const MSArray& arr)
+	{
+		dealloc();
+		alloc(arr.size());
+
+		for (size_type i = 0; i < _size; ++i)
+			_array[i] = arr[i];
+
+		return *this;
+	}
+
+	MSArray& operator = (MSArray&& arr) noexcept
+	{
+		dealloc();
+		_array = arr._array;
+		arr._array = nullptr;
+		return *this;
+	}
+
+	~MSArray()
+	{
+		dealloc();
+	}
+
+	size_type size() const
 	{
 		return _size;
 	}
 
-	T& operator [] (const std::size_t& index)
+	value_type* begin() const
 	{
-		return &_array[index];
+		return _array;
+	}
+
+	value_type* end() const
+	{
+		return _array + _size;
+	}
+
+	value_type& operator [] (const size_type& index)
+	{
+		return _array[index];
+	}
+
+	const value_type& operator [] (const size_type& index) const
+	{
+		return _array[index];
+	}
+
+	bool operator == (const MSArray& arr)
+	{
+		// Whoever developed std::equal, thank you so much
+		return std::equal(begin(), end(), arr.begin(), arr.end());
+	}
+
+	bool operator != (const MSArray& arr)
+	{
+		return !( *this == arr );
+	}
+
+	bool operator < (const MSArray& arr)
+	{
+		if (*this == arr)
+			return false;
+		if (_size < arr._size)
+			return true;
+
+		for (std::size_t i = 0; i < _size; ++i)
+		{
+			if (_array[i] < arr[i])
+				return true;
+		}
+
+		return false;
+	}
+
+	bool operator > (const MSArray& arr)
+	{
+		if (*this == arr)
+			return false;
+		if (_size > arr._size)
+			return true;
+
+		return !( *this < arr );
+	}
+
+	bool operator <= (const MSArray& arr)
+	{
+		if (*this == arr)
+			return true;
+
+		return ( *this < arr );
+	}
+
+	bool operator >= (const MSArray& arr)
+	{
+		if (*this == arr)
+			return true;
+
+		return ( *this > arr );
 	}
 };
 
-#endif // MSARRAY_H
+#endif // MSARRAY_H_INCLUDED
