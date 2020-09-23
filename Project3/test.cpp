@@ -15,6 +15,9 @@ using std::endl;
 #include <stdexcept>
 using std::out_of_range;
 
+#include <vector>
+using std::vector;
+
 int main()
 {
 	LLNode<int>* head = nullptr;
@@ -27,6 +30,14 @@ int main()
 	{
 		cout << error.what() << endl;
 	}
+
+	vector<int> v = { 0, 1, 2, 3, 4, 5 };
+	bool sorted = checkSorted(v.begin(), v.end());
+
+	if (sorted)
+		cout << "v is sorted" << endl;
+	else
+		cout << "v is not sorted" << endl;
 
 	return 0;
 }

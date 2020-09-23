@@ -39,7 +39,14 @@ void didItThrow(const std::function<void()>& ff, bool& threw);
 template <typename FDIter>
 bool checkSorted(FDIter first, FDIter last)
 {
-    return false;  // Dummy return
+    while (first != last - 1)
+    {
+        if (*(first + 1) < *first)
+            return false;
+        first = first + 1;
+    }
+
+    return true;
 }
 
 int gcd(int a, int b);
