@@ -20,13 +20,18 @@ ValueType lookup(const LLNode<ValueType>* head, const std::size_t& index)
     const LLNode<ValueType>* ptr = head;
     std::size_t i = 0;
 
-    while (ptr != nullptr && i != index)
+    while (i != index)
     {
+        if (ptr == nullptr)
+            throw std::out_of_range("Global function \"lookup(const LLNode<ValueType>* head, "
+                                    "const std::size_t& index)\" threw a std::out_of_range "
+                                    "exception: Invalid index.");
+
         ptr = ptr->_next;
         ++i;
     }
 
-    if (ptr == nullptr && i != index)
+    if (ptr == nullptr)
         throw std::out_of_range("Global function \"lookup(const LLNode<ValueType>* head, "
                                 "const std::size_t& index)\" threw a std::out_of_range "
                                 "exception: Invalid index.");

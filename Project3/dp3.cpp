@@ -29,5 +29,10 @@ void didItThrow(const function<void()>& ff, bool& threw)
 
 int gcd(int a, int b)
 {
-    return 0;
+    if (a == 0)
+        return b;
+    if (a > b)
+        return gcd(b, a);
+
+    return gcd(b % a, a);
 }
