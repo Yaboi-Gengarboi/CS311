@@ -27,8 +27,8 @@ ValueType lookup(const LLNode<ValueType>* head, const std::size_t& index)
     }
 
     if (ptr == nullptr && i != index)
-        throw std::out_of_range("Global function \"lookup(const LLNode<ValueType>* head,"
-                                "const std::size_t& index)\" threw a std::out_of_range"
+        throw std::out_of_range("Global function \"lookup(const LLNode<ValueType>* head, "
+                                "const std::size_t& index)\" threw a std::out_of_range "
                                 "exception: Invalid index.");
 
     return ptr->_data;
