@@ -18,7 +18,7 @@ using std::out_of_range;
 #include <vector>
 using std::vector;
 
-int main()
+int test()
 {
 	LLNode<int>* head = nullptr;
 
