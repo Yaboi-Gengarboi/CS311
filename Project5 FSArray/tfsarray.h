@@ -2,7 +2,7 @@
 // tfsarray.h
 // Justyn Durnford
 // Created on 2020-10-08
-// Last updated on 2020-10-26
+// Last updated on 2020-10-29
 // Header file for FSArray template class.
 
 #ifndef TFSARRAY_H_INCLUDED
@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <stdexcept>
+#include <utility>
 
 // -Template parameters:
 //
@@ -84,39 +85,115 @@ class TFSArray
 		delete[] _array;
 	}
 
-	//
+	// Creates a new TFSArray of new_size and move it into this TFSArray
+	// if succesful.
 	// -Preconditions:
-	//  
-	void reallocate(size_type newsize)
+	//  #1: new_size > _size
+	// Strong Garuntee: If the function throws an exception, the state
+	// of the program is rolled back to the state just before the 
+	// function call.
+	// This function is exception neutral.
+	void reallocate(size_type new_size)
 	{
+		try
+		{
+			// Attempt to create a new TFSArray of new_size.
+			// If this succeeds, copy every element of the this TFSArray
+			// into the new TFSArray up until the end of this TFSArray.
+			// Then, move the new TFSArray into this TFSArray.
+			TFSArray new_arr(new_size);
+			new_arr.index_copy(*this, 0, _size, 0);
+			*this = std::move(new_arr);
+		}
+		catch (...)
+		{
+			// If this fails, keep the current TFSArray.
+			throw;
+		}
+	}
+
+	// Copies each element of the other TFSArray in the range [begin, end)
+	// into this TFSArray, starting at index dest.
+	// Basic Garuntee: If the function throws an exception, the program is 
+	// in a valid state. No resources are leaked, and all objects' invariants 
+	// are intact.
+	// This function is exception neutral.
+	void index_copy(const TFSArray& other, size_type begin, size_type end, size_type dest)
+	{
+		try
+		{
+			for (size_type i = begin; i < end; ++i)
+				_array[i + dest] = other._array[i];
+		}
+		catch (...)
+		{
+			deallocate();
+			throw;
+		}
+	}
+
+	// Deallocates the TFSArray and moves the other TFSArray into this
+	// TFSArray.
+	// No-throw guarantee. This function will never throw.
+	void move_from(TFSArray& other) noexcept
+	{
+		deallocate();
 		
-	}
-
-	// Copies the elements of the other TFSArray to this TFSArray,
-	// including each element in the range [begin, end) to the
-	// index specified by dest.
-	// -Preconditions:
-	//  #1: other._array != nullptr
-	//  #2: begin < end <= other._size
-	//  #3: dest + (end - begin) <= _size
-	// Nothrow guarantee. This function will never throw.
-	void copy(const TFSArray& other, size_type begin, size_type end, size_type dest) noexcept
-	{
-		for (size_type i = begin; i < end; ++i)
-			_array[dest + i] = other[i];
-	}
-
-	// Moves the data from other to this TFSArray, along
-	// with the values of _size and _capacity.
-	// -Preconditions:
-	//  #1: other is not an empty TFSArray.
-	// Nothrow guarantee. This function will never throw.
-	void move(TFSArray& other) noexcept
-	{
-		_array = other._array;
 		_size = other._size;
 		_capacity = other._capacity;
+		_array = other._array;
+
+		other._size = 0;
+		other._capacity = 0;
 		other._array = nullptr;
+	}
+
+	// Moves every element of the TFSArray in the range [begin, end]
+	// forward by 1 index. 
+	// Basic Garuntee: If the function throws an exception, the program is 
+	// in a valid state. No resources are leaked, and all objects' invariants 
+	// are intact.
+	// This function is exception neutral.
+	void move_forward(size_type begin, size_type end)
+	{
+		try
+		{
+			value_type tmp = _array[begin];
+
+			for (size_type i = end - 1; i > begin; --i)
+				_array[i + 1] = _array[i];
+
+			_array[begin + 1] = tmp;
+		}
+		catch (...)
+		{
+			deallocate();
+			throw;
+		}
+	}
+
+	// Moves every element of the TFSArray in the range [begin, end]
+	// backward by 1 index. 
+	// Basic Garuntee: If the function throws an exception, the program is 
+	// in a valid state. No resources are leaked, and all objects' invariants 
+	// are intact.
+	// This function is exception neutral.
+	void move_back(size_type begin, size_type end)
+	{
+		try
+		{
+			value_type tmp = _array[end];
+
+			for (size_type i = begin; i < end; ++i)
+				_array[i] = _array[i + 1];
+
+			_array[end - 1] = tmp;
+		}
+		catch (...)
+		{
+			deallocate();
+			throw;
+		}
 	}
 
 	public:
@@ -127,6 +204,7 @@ class TFSArray
 	// Strong Garuntee: If the function throws an exception, the state
 	// of the program is rolled back to the state just before the 
 	// function call.
+	// This function is exception neutral.
 	explicit TFSArray(size_type size = 0)
 	{
 		allocate(size);
@@ -137,19 +215,19 @@ class TFSArray
 	// Strong Garuntee: If the function throws an exception, the state
 	// of the program is rolled back to the state just before the 
 	// function call.
+	// This function is exception neutral.
 	TFSArray(const TFSArray& other)
 	{
 		allocate(other._size);
-
-		copy(other, 0, other._size, _array);
+		index_copy(other, 0, other._size, 0);
 	}
 
 	// Move constructor.
 	// Moves the passed FSArray to this TFSArray.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	TFSArray(TFSArray&& other) noexcept
 	{
-		move(other);
+		move_from(other);
 	}
 
 	// 2-parameter constructor.
@@ -169,18 +247,16 @@ class TFSArray
 
 	// Copy assignment operator.
 	// Turns this FSArray into a copy of the passed TFSArray.
-	// Strong Garuntee: If the function throws an exception, the state
-	// of the program is rolled back to the state just before the 
-	// function call.
+	// Basic Garuntee: If the function throws an exception, 
+	// the program is in a valid state.
 	// This function is exception neutral.
 	TFSArray& operator = (const TFSArray& other)
 	{
 		try
 		{
-			// Attempt to create a copy of the other TFSArray.
-			// If this successful, move the copy to this TFSArray.
-			TFSArray copy(other);
-			move(copy);
+			deallocate();
+			allocate(other._size);
+			index_copy(other, 0, other._size, 0);
 		}
 		catch (...)
 		{
@@ -192,39 +268,37 @@ class TFSArray
 	}
 
 	// Moves the passed TFSArray to this TFSArray.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	TFSArray& operator = (TFSArray&& other) noexcept
 	{
-		deallocate();
-		move(other);
-
+		move_from(other);
 		return *this;
 	}
 
 	// Destructor.
 	// Frees allocated memory.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	~TFSArray() noexcept
 	{
 		deallocate();
 	}
 
 	// Returns _size.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	size_type size() const noexcept
 	{
 		return _size;
 	}
 
 	// Returns _capacity.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	size_type capacity() const noexcept
 	{
 		return _capacity;
 	}
 
 	// Returns true if _size == 0.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	bool empty() const noexcept
 	{
 		return _size == 0;
@@ -232,23 +306,29 @@ class TFSArray
 
 	// Returns a pointer to the first element of the TFSArray.
 	// This will be a nullptr if the TFSArray has a size of 0.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	iterator begin() noexcept
 	{
+		if (empty())
+			return nullptr;
+
 		return _array;
 	}
 
 	// Returns a const pointer to the first element of the TFSArray.
 	// This will be a nullptr if the TFSArray has a size of 0.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	const_iterator begin() const noexcept
 	{
-		return (const_iterator*)(_array);
+		if (empty())
+			return nullptr;
+
+		return (const_iterator)(_array);
 	}
 
 	// Returns a pointer to 1 past the last element of the TFSArray.
 	// This will be a nullptr if the TFSArray has a size of 0.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	iterator end()noexcept
 	{
 		if (empty())
@@ -259,7 +339,7 @@ class TFSArray
 
 	// Returns a const pointer to 1 past the last element of the TFSArray.
 	// This will be a nullptr if the TFSArray has a size of 0.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	const_iterator end() const noexcept
 	{
 		if (empty())
@@ -269,49 +349,165 @@ class TFSArray
 	}
 
 	// Resizes and reallocates the TFSArray.
-	void resize(const size_type& size)
+	// Strong Garuntee: If the function throws an exception, the state
+	// of the program is rolled back to the state just before the 
+	// function call.
+	// This function is exception neutral.
+	void resize(const size_type& new_size)
 	{
-		if (size > _size)
-		{
-			if (size < _capacity)
-				_size = size;
-			else // size >= _capacity
-			{
+		if (new_size > _capacity)
+			reallocate(new_size);
+		else // new_size <= _capacity
+			_size = new_size;
+	}
 
+	// Inserts the passed element value at the position given by pos.
+	// If the TFSArray is not at maximum capacity, this function will
+	// never throw.
+	// Otherwise, if an exception is thrown, the state
+	// of the program is rolled back to the state just before the 
+	// function call.
+	// This function is exception neutral.
+	iterator insert(iterator pos, const value_type& value)
+	{
+		iterator itr = nullptr;
+
+		if (_size == _capacity) // Need to reallocate.
+		{
+			try
+			{
+				TFSArray new_arr(_size + 1);
+				
+				if (pos == begin())
+				{
+					new_arr._array[0] = value;
+					new_arr.index_copy(*this, 0, _size, 1);
+					move_from(new_arr);
+					itr = begin();
+				}
+				else if (pos == end())
+				{
+					new_arr.index_copy(*this, 0, _size, 0);
+					new_arr._array[_size] = value;
+					move_from(new_arr);
+					itr = end() - 1;
+				}
+				else
+				{
+					size_type index = std::distance(begin(), pos);
+					new_arr.index_copy(*this, 0, index, 0);
+					new_arr[index] = value;
+					new_arr.index_copy(*this, index + 1, _size, index + 1);
+					move_from(new_arr);
+					itr = begin() + index;
+				}
+				
 			}
+			catch (...)
+			{
+				throw;
+			}
+		}
+		else // Don't need to reallocate, but we have to rearrange the elements.
+		{
+			if (pos == begin())
+			{
+				++_size;
+
+				move_forward(0, _size);
+				_array[0] = value;
+
+				itr = begin();
+			}
+			else if (pos == end())
+			{
+				++_size;
+				_array[_size - 1] = value;
+				itr = end() - 1;
+			}
+			else
+			{
+				++_size;
+				size_type index = std::distance(begin(), pos);
+
+				move_forward(index, _size);
+				_array[index] = value;
+
+				itr = pos;
+			}
+		}
+
+		return itr;
+	}
+
+	// Removes the element at pos of the TFSArray.
+	// -Preconditions:
+	//  #1: _array != nullptr.
+	//  #2: pos is a valid iterator for the container.
+	// If the preconditions are met, this function will never throw.
+	// Otherwise, it causes undefined behavior.
+	iterator erase(iterator pos)
+	{
+		iterator itr = nullptr;
+
+		if (pos == begin())
+		{
+			move_back(0, _size);
+			--_size;
+			itr = begin();
+		}
+		else if (pos == end())
+		{
+			--_size;
+			itr = end() - 1;
 		}
 		else
 		{
+			move_back(std::distance(begin(), pos), _size);
+			--_size;
+			itr = pos;
+		}
 
+		return itr;
+	}
+
+	// Adds the element at the end of the TFSArray.
+	// If the capacity of the TFSArray is sufficient, this function
+	// will never throw.
+	// Otherwise, if an exception is thrown, the state
+	// of the program is rolled back to the state just before the 
+	// function call.
+	// This function is exception neutral.
+	void push_back(const value_type& value)
+	{
+		if (_array == nullptr)
+			allocate(1);
+
+		if (_size < _capacity)
+		{
+			++_size;
+			_array[_size - 1] = value;
+		}
+		else // _size == _capacity
+		{
+			size_type index = _size;
+			reallocate(_size + 1);
+			_array[index] = value;
 		}
 	}
 
-	//
-	void insert()
-	{
-
-	}
-
-	//
-	void erase()
-	{
-
-	}
-
-	//
-	void push_back(const value_type& value)
-	{
-
-	}
-
-	// Removes and destroys 
+	// Removes the last element of the TFSArray, reducing _size by 1.
+	// -Preconditions: 
+	//  #1: _size != 0
+	// If the preconditions are met, this function will never throw.
+	// Otherwise, it causes undefined behavior.
 	void pop_back()
 	{
-
+		--_size;
 	}
 
 	// Swaps the values of this TFSArray and the passed TFSArray.
-	// Nothrow guarantee. This function will never throw.
+	// No-throw guarantee. This function will never throw.
 	void swap(TFSArray& other) noexcept
 	{
 		std::swap(*this, other);
@@ -322,7 +518,7 @@ class TFSArray
 	// -Preconditions:
 	//  #1: _array != nullptr
 	//  #2: index is a valid index for the TFSArray (index < _size).
-	// If the TFSArray is not empty, this function will never throw.
+	// If the preconditions are met, this function will never throw.
 	// Otherwise, it causes undefined behavior.
 	reference operator [] (size_type index)
 	{
@@ -334,7 +530,7 @@ class TFSArray
 	// -Preconditions:
 	//  #1: _array != nullptr
 	//  #2: index is a valid index for the TFSArray (index < _size).
-	// If the TFSArray is not empty, this function will never throw.
+	// If the preconditions are met, this function will never throw.
 	// Otherwise, it causes undefined behavior.
 	const_reference operator [] (size_type index) const
 	{
