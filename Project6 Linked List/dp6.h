@@ -221,8 +221,7 @@ class LLMap
 		catch (...) { throw; }
 	}
 
-	template <typename T>
-	void traverse(std::function<T> fn)
+	void traverse(std::function<void(KeyType, ValType)> fn)
 	{
 		try
 		{
