@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{21db2683-fe2b-4e56-80c5-bcf2d19e7832}</ProjectGuid>
-    <RootNamespace>Project8</RootNamespace>
+    <ProjectGuid>{424e604e-1677-4a6e-a87f-7789b6af1eda}</ProjectGuid>
+    <RootNamespace>PartB</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,7 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="countwords.cpp" />
+    <ClInclude Include="doctest.h" />
+    <ClInclude Include="squarer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="squarer_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,8 @@
-// Project 8
+// Project8 Part A
 // countwords.cpp
 // Justyn Durnford
 // Created on 2020-11-20
-// Last updated on 2020-11-20
+// Last updated on 2020-11-25
 // Source file for Part A of CS311 Project 8
 
 #include <fstream>
@@ -20,17 +20,14 @@ using std::map;
 using std::string;
 using std::getline;
 
-#include <utility>
-using std::pair;
-using std::make_pair;
-
 // Iterates through every element of the std::map and
 // prints each associated value.
 // Preconditions: 
 //  #1: begin <= end
-//  #2: begin != nullptr
+// If Precondition #1 is met, this function should never
+// throw.
 void print_map_str_ull(map<string, unsigned long long>::const_iterator begin, 
-					   map<string, unsigned long long>::const_iterator end)
+					   map<string, unsigned long long>::const_iterator end) noexcept
 {
 	while (begin != end)
 	{
@@ -39,29 +36,55 @@ void print_map_str_ull(map<string, unsigned long long>::const_iterator begin,
 	}
 }
 
-int main()
+int read_file_and_count() 
 {
 	string file_dir, word;
 	map<string, unsigned long long> data;
 
 	cout << "Enter a txt file to read from." << endl;
-	cin >> file_dir;
+	getline(cin, file_dir);
+
+	// file_dir = "countwords_test.txt"; // Debug
 
 	ifstream fin(file_dir);
 
-	if (fin.bad()) // Could not open file.
+	if (!fin.good()) // Could not open file.
 	{
 		cout << "Could not open file " << file_dir << endl;
 		return 1;
 	}
 
-	while (!fin.bad())
+	while (fin.good())
 	{
 		fin >> word;
-		++data[word];
+
+		if (fin.bad())
+		{
+			if (fin.eof())
+				break;
+			else
+			{
+				cout << "Error while reading file " << file_dir << endl;
+				return 2;
+			}
+		}
+
+		try
+		{
+			++data[word];
+		}
+		catch (...)
+		{
+			throw;
+		}
 	}
 
 	print_map_str_ull(data.begin(), data.end());
 
 	return 0;
+}
+
+int main()
+{
+	return read_file_and_count();
 }

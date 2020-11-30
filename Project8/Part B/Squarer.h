@@ -1,3 +1,4 @@
+// Project8 Part B
 // squarer.h
 // Glenn G. Chappell
 // 2020-11-20
